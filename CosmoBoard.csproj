@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>CosmoNotes</AssemblyName>
+    <Product>CosmoNotes</Product>
+    <Title>CosmoNotes</Title>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>Assets/cosmoboard.ico</ApplicationIcon>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.20" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.20" />
+    <PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.3.20" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.20" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets/cosmoboard.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Explicitly classify the application XAML so Avalonia's build task
+         always precompiles it into the output assembly. -->
+    <AvaloniaXaml Remove="**\*.axaml" />
+    <AvaloniaXaml Include="App.axaml" />
+    <AvaloniaXaml Include="MainWindow.axaml" />
+    <AvaloniaXaml Include="SettingsWindow.axaml" />
+  </ItemGroup>
+</Project>

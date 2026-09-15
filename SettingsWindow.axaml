@@ -1,0 +1,56 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:CosmoBoard"
+        x:Class="CosmoBoard.SettingsWindow"
+        Width="560" Height="590"
+        MinWidth="490" MinHeight="480"
+        WindowStartupLocation="CenterOwner"
+        Title="CosmoNotes Settings">
+  <ScrollViewer>
+    <StackPanel Margin="18" Spacing="12">
+      <TextBlock Text="Daily Markdown Folder" FontSize="16" FontWeight="SemiBold" />
+      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+        <TextBox x:Name="FolderTextBox" Grid.Column="0" Watermark="Path to your YYYY-MM-DD.md files" />
+        <Button Grid.Column="1" Content="Browse…" Click="Browse_Click" Padding="14,6" />
+      </Grid>
+      <TextBlock Text="Files must be named YYYY-MM-DD.md. The newest date in the filename is displayed." FontSize="11" Opacity="0.7" TextWrapping="Wrap" />
+
+      <Separator Margin="0,4" />
+      <TextBlock Text="Appearance" FontSize="16" FontWeight="SemiBold" />
+
+      <Grid ColumnDefinitions="180,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="10">
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Font" VerticalAlignment="Center" />
+        <ComboBox x:Name="FontComboBox" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" MaxDropDownHeight="320">
+          <ComboBox.ItemTemplate>
+            <DataTemplate x:DataType="local:FontOption">
+              <TextBlock Text="{Binding Name}" FontFamily="{Binding Family}" FontSize="14" />
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Title bar font size" VerticalAlignment="Center" />
+        <NumericUpDown x:Name="TitleFontSizeBox" Grid.Row="1" Grid.Column="1" Minimum="8" Maximum="48" Increment="1" FormatString="0.#" />
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Tasks and notes font size" VerticalAlignment="Center" />
+        <NumericUpDown x:Name="ContentFontSizeBox" Grid.Row="2" Grid.Column="1" Minimum="8" Maximum="48" Increment="1" FormatString="0.#" />
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="Toggle box color" VerticalAlignment="Center" />
+        <ColorPicker x:Name="ToggleColorPicker" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" />
+
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="Toggle box size" VerticalAlignment="Center" />
+        <NumericUpDown x:Name="ToggleSizeBox" Grid.Row="4" Grid.Column="1" Minimum="10" Maximum="40" Increment="1" FormatString="0.#" />
+
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="Background color" VerticalAlignment="Center" />
+        <ColorPicker x:Name="BackgroundColorPicker" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Stretch" />
+
+        <TextBlock Grid.Row="6" Grid.Column="0" Text="Font color" VerticalAlignment="Center" />
+        <ColorPicker x:Name="FontColorPicker" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Stretch" />
+      </Grid>
+
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,8,0,0">
+        <Button Content="Cancel" Click="Cancel_Click" MinWidth="80" />
+        <Button Content="Save" Click="Save_Click" MinWidth="80" />
+      </StackPanel>
+    </StackPanel>
+  </ScrollViewer>
+</Window>

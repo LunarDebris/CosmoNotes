@@ -1,0 +1,94 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="CosmoBoard.MainWindow"
+        Width="280" Height="420"
+        MinWidth="190" MinHeight="180"
+        CanResize="True"
+        SystemDecorations="None"
+        ExtendClientAreaToDecorationsHint="True"
+        ShowInTaskbar="True"
+        Background="#D4BBD8"
+        TransparencyLevelHint="None"
+        Title="CosmoNotes">
+
+  <Window.Resources>
+    <SolidColorBrush x:Key="NoteEditorIdleBrush" Color="#D4BBD8" />
+    <SolidColorBrush x:Key="NoteEditorFocusBrush" Color="#C5A8CA" />
+  </Window.Resources>
+
+  <Window.Styles>
+    <!-- The Fluent TextBox theme paints its own template border on focus/hover.
+         Override that inner border so note editors never fall back to the theme's
+         black focused background. -->
+    <Style Selector="TextBox.note-editor /template/ Border#PART_BorderElement">
+      <Setter Property="Background" Value="{DynamicResource NoteEditorIdleBrush}" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    <Style Selector="TextBox.note-editor:pointerover /template/ Border#PART_BorderElement">
+      <Setter Property="Background" Value="{DynamicResource NoteEditorIdleBrush}" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+    <Style Selector="TextBox.note-editor:focus /template/ Border#PART_BorderElement">
+      <Setter Property="Background" Value="{DynamicResource NoteEditorFocusBrush}" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+    <Style Selector="TextBox.note-editor:focus-visible /template/ Border#PART_BorderElement">
+      <Setter Property="Background" Value="{DynamicResource NoteEditorFocusBrush}" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+  </Window.Styles>
+  <Border x:Name="RootBorder" Background="#D4BBD8" CornerRadius="2" BorderBrush="#B89FBD" BorderThickness="1">
+    <Grid RowDefinitions="Auto,*" ClipToBounds="True">
+      <Border x:Name="Header"
+              Grid.Row="0"
+              Background="#C5A8CA"
+              Padding="8,5"
+              PointerPressed="Header_PointerPressed"
+              Cursor="SizeAll">
+        <TextBlock x:Name="DateText"
+                   Text="No date"
+                   FontSize="12"
+                   FontWeight="SemiBold"
+                   Foreground="#2E2530"
+                   HorizontalAlignment="Center" />
+      </Border>
+
+      <ScrollViewer Grid.Row="1" Padding="10,5,10,12"
+                    HorizontalScrollBarVisibility="Disabled"
+                    VerticalScrollBarVisibility="Auto">
+        <StackPanel x:Name="ItemsPanel" Spacing="2" />
+      </ScrollViewer>
+
+      <!-- Frameless resize hit targets. Edges are 6px and corners are 10px. -->
+      <Border Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Stretch"
+              Width="6" Background="Transparent" Cursor="SizeWestEast" Tag="West"
+              PointerPressed="ResizeEdge_PointerPressed" />
+      <Border Grid.RowSpan="2" HorizontalAlignment="Right" VerticalAlignment="Stretch"
+              Width="6" Background="Transparent" Cursor="SizeWestEast" Tag="East"
+              PointerPressed="ResizeEdge_PointerPressed" />
+      <Border Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Top"
+              Height="6" Background="Transparent" Cursor="SizeNorthSouth" Tag="North"
+              PointerPressed="ResizeEdge_PointerPressed" />
+      <Border Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"
+              Height="6" Background="Transparent" Cursor="SizeNorthSouth" Tag="South"
+              PointerPressed="ResizeEdge_PointerPressed" />
+
+      <Border Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top"
+              Width="10" Height="10" Background="Transparent" Cursor="TopLeftCorner" Tag="NorthWest"
+              PointerPressed="ResizeEdge_PointerPressed" />
+      <Border Grid.RowSpan="2" HorizontalAlignment="Right" VerticalAlignment="Top"
+              Width="10" Height="10" Background="Transparent" Cursor="TopRightCorner" Tag="NorthEast"
+              PointerPressed="ResizeEdge_PointerPressed" />
+      <Border Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+              Width="10" Height="10" Background="Transparent" Cursor="BottomLeftCorner" Tag="SouthWest"
+              PointerPressed="ResizeEdge_PointerPressed" />
+      <Border Grid.RowSpan="2" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+              Width="14" Height="14" Background="Transparent" Cursor="BottomRightCorner" Tag="SouthEast"
+              PointerPressed="ResizeEdge_PointerPressed">
+        <Path x:Name="ResizeGlyph" Data="M 4,12 L 12,4 M 8,12 L 12,8"
+              Stroke="#8F7792" StrokeThickness="1" />
+      </Border>
+    </Grid>
+  </Border>
+</Window>
