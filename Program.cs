@@ -1,6 +1,6 @@
 using Avalonia;
 
-namespace CosmoBoard;
+namespace CosmoNote;
 
 internal static class Program
 {

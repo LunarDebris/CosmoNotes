@@ -1,11 +1,11 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="using:CosmoBoard"
-        x:Class="CosmoBoard.SettingsWindow"
+        xmlns:local="using:CosmoNote"
+        x:Class="CosmoNote.SettingsWindow"
         Width="560" Height="590"
         MinWidth="490" MinHeight="480"
         WindowStartupLocation="CenterOwner"
-        Title="CosmoNotes Settings">
+        Title="CosmoNote Settings">
   <ScrollViewer>
     <StackPanel Margin="18" Spacing="12">
       <TextBlock Text="Daily Markdown Folder" FontSize="16" FontWeight="SemiBold" />
@@ -15,6 +15,8 @@
       </Grid>
       <TextBlock Text="Files must be named YYYY-MM-DD.md. The newest date in the filename is displayed." FontSize="11" Opacity="0.7" TextWrapping="Wrap" />
 
+      <CheckBox x:Name="CarryOverCheckBox" Content="Copy incomplete tasks to Today from the latest existing day" />
+      <TextBlock Text="Only applies when the currently viewed date is the latest existing day before today. Existing tasks are not duplicated." FontSize="11" Opacity="0.7" TextWrapping="Wrap" />
       <Separator Margin="0,4" />
       <TextBlock Text="Appearance" FontSize="16" FontWeight="SemiBold" />
 

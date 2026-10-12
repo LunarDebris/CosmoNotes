@@ -1,6 +1,6 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:Class="CosmoBoard.MainWindow"
+        x:Class="CosmoNote.MainWindow"
         Width="280" Height="420"
         MinWidth="190" MinHeight="180"
         CanResize="True"
@@ -9,7 +9,7 @@
         ShowInTaskbar="True"
         Background="#D4BBD8"
         TransparencyLevelHint="None"
-        Title="CosmoNotes">
+        Title="CosmoNote">
 
   <Window.Resources>
     <SolidColorBrush x:Key="NoteEditorIdleBrush" Color="#D4BBD8" />

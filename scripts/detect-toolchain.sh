@@ -2,7 +2,7 @@
 set -eu
 
 # Minimal subset of the helper interface used by the known-working Makefile.
-# CosmoBoard only needs the Windows profile-path commands.
+# CosmoNote only needs the Windows profile-path commands.
 
 windows_home() {
     if command -v cygpath >/dev/null 2>&1; then

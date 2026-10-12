@@ -1,3 +1,3 @@
-namespace CosmoBoard.Models;
+namespace CosmoNote.Models;
 
 public sealed record TaskItem(int Index, string Text, bool IsCompleted);

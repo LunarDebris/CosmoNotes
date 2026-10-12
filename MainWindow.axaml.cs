@@ -4,9 +4,10 @@ using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
-using CosmoBoard.Models;
+using System.Text.RegularExpressions;
+using CosmoNote.Models;
 
-namespace CosmoBoard;
+namespace CosmoNote;
 
 public partial class MainWindow : Window
 {
@@ -17,6 +18,14 @@ public partial class MainWindow : Window
     private MenuItem? _topmostMenuItem;
     private MenuItem? _backgroundMenuItem;
     private DateOnly? _selectedDate;
+    private static readonly Regex TagPattern = new(@"\((?<tag>[^()\r\n]+)\)", RegexOptions.Compiled);
+
+    private static string? TaskTag(TaskItem task)
+    {
+        var match = TagPattern.Match(task.Text);
+        return match.Success && !string.IsNullOrWhiteSpace(match.Groups["tag"].Value)
+            ? match.Groups["tag"].Value.Trim() : null;
+    }
 
     public MainWindow(AppServices services)
     {
@@ -72,9 +81,11 @@ public partial class MainWindow : Window
         menu.Items.Add(new Separator());
         menu.Items.Add(new MenuItem { Header = "Refresh", Command = new RelayCommand(Refresh) });
         menu.Items.Add(new MenuItem { Header = "Open New CosmoNote", Command = new RelayCommand(OpenNewCosmoNote) });
-        menu.Items.Add(new MenuItem { Header = "Change Date", Command = new RelayCommand(() => _ = ChangeDateAsync()) });
+        menu.Items.Add(new Separator());
+        menu.Items.Add(new MenuItem { Header = "Yesterday", Command = new RelayCommand(() => GoToDate(DateOnly.FromDateTime(DateTime.Today).AddDays(-1))) });
+        menu.Items.Add(new MenuItem { Header = "Tomorrow", Command = new RelayCommand(() => GoToDate(DateOnly.FromDateTime(DateTime.Today).AddDays(1))) });
         menu.Items.Add(new MenuItem { Header = "Today", Command = new RelayCommand(GoToToday) });
-        menu.Items.Add(new MenuItem { Header = "Add Task", Command = new RelayCommand(() => BeginAddTask(GetActiveDate())) });
+        menu.Items.Add(new MenuItem { Header = "Change Date", Command = new RelayCommand(() => _ = ChangeDateAsync()) });
         menu.Items.Add(new Separator());
         _topmostMenuItem = new MenuItem { Header = "Always on Top", IsChecked = Topmost, ToggleType = MenuItemToggleType.CheckBox, Command = new RelayCommand(ToggleTopmost) };
         _backgroundMenuItem = new MenuItem { Header = "Background / Tray", IsChecked = _services.Settings.Current.BackgroundMode, ToggleType = MenuItemToggleType.CheckBox, Command = new RelayCommand(ToggleBackgroundMode) };
@@ -131,6 +142,7 @@ public partial class MainWindow : Window
             AddSectionTitle("Notes");
             if (!string.IsNullOrWhiteSpace(folder) && Directory.Exists(folder))
                 AddNotesEditor(GetActiveDate(), string.Empty);
+            AddGlobalNotesEditor();
             return;
         }
 
@@ -140,7 +152,10 @@ public partial class MainWindow : Window
         {
             var taskHeader = AddSectionTitle("Task");
             taskHeader.ContextMenu = BuildTaskHeaderContextMenu(entry);
-            foreach (var task in entry.Tasks)
+            foreach (var task in entry.Tasks
+                .OrderBy(task => TaskTag(task) is null ? 1 : 0)
+                .ThenBy(task => TaskTag(task), StringComparer.OrdinalIgnoreCase)
+                .ThenBy(task => task.Index))
                 AddTask(entry, task);
         }
 
@@ -148,6 +163,7 @@ public partial class MainWindow : Window
 
         AddSectionTitle("Notes");
         AddNotesEditor(entry.Date, string.Join(Environment.NewLine, entry.Notes.Select(note => note.Text)));
+        AddGlobalNotesEditor();
     }
 
     private FontFamily SelectedFontFamily
@@ -699,6 +715,37 @@ public partial class MainWindow : Window
         ItemsPanel.Children.Add(editor);
     }
 
+    private void AddGlobalNotesEditor()
+    {
+        AddSectionTitle("Global Notes");
+        var initialText = _services.GlobalNotes.Load();
+        var editor = new TextBox
+        {
+            Text = initialText,
+            Watermark = "Notes shared across all CosmoNote windows…",
+            FontFamily = SelectedFontFamily,
+            FontSize = _services.Settings.Current.ContentFontSize,
+            BorderThickness = new Thickness(0),
+            Padding = new Thickness(4, 4),
+            Margin = new Thickness(0, 0, 0, 2),
+            MinHeight = 100,
+            AcceptsReturn = true,
+            TextWrapping = TextWrapping.Wrap,
+            VerticalContentAlignment = Avalonia.Layout.VerticalAlignment.Top
+        };
+        ApplyNoteEditorStyle(editor);
+        editor.LostFocus += (_, _) =>
+        {
+            var text = editor.Text ?? string.Empty;
+            if (text != initialText && _services.GlobalNotes.Save(text))
+            {
+                _lastRefresh = DateTime.MinValue;
+                Refresh();
+            }
+        };
+        ItemsPanel.Children.Add(editor);
+    }
+
     private void AddNoNotesPrompt(DateOnly date)
     {
         var prompt = new TextBlock
@@ -879,16 +926,33 @@ public partial class MainWindow : Window
         if (date is null)
             return;
 
-        _selectedDate = date.Value;
+        GoToDate(date.Value);
+    }
+
+    private void GoToDate(DateOnly date)
+    {
+        _selectedDate = date;
         _lastRefresh = DateTime.MinValue;
         Refresh();
     }
 
     private void GoToToday()
     {
-        _selectedDate = DateOnly.FromDateTime(DateTime.Today);
-        _lastRefresh = DateTime.MinValue;
-        Refresh();
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var folder = _services.Settings.Current.NotesFolder;
+        if (_services.Settings.Current.CarryOverUncompletedToToday &&
+            _selectedDate is { } sourceDate && sourceDate < today &&
+            _services.Markdown.LoadDate(folder, sourceDate) is { } source &&
+            _services.Markdown.LatestExistingDateBefore(folder, today) == sourceDate)
+        {
+            var existing = _services.Markdown.LoadDate(folder, today)?.Tasks
+                .Select(task => task.Text.Trim())
+                .ToHashSet(StringComparer.OrdinalIgnoreCase) ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var pending = source.Tasks.Where(task => !task.IsCompleted && existing.Add(task.Text.Trim())).ToList();
+            if (pending.Count > 0)
+                _services.Markdown.AppendTasks(folder, today, pending);
+        }
+        GoToDate(today);
     }
 
     private async Task<DateOnly?> PickDateAsync(string title, DateOnly initialDate)
@@ -997,6 +1061,7 @@ public partial class MainWindow : Window
     private void SettingsWindow_Saved(object? sender, AppSettings settings)
     {
         _services.Settings.Current.NotesFolder = settings.NotesFolder;
+        _services.Settings.Current.CarryOverUncompletedToToday = settings.CarryOverUncompletedToToday;
         _services.Settings.Current.FontFamily = settings.FontFamily;
         _services.Settings.Current.TitleBarFontSize = settings.TitleBarFontSize;
         _services.Settings.Current.ContentFontSize = settings.ContentFontSize;

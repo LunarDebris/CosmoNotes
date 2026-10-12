@@ -35,4 +35,4 @@ if count != 1:
 path.write_text(updated, encoding="utf-8", newline="\n")
 PY
 
-printf 'CosmoNotes build: v%05d\n' "$next"
+printf 'CosmoNote build: v%05d\n' "$next"

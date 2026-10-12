@@ -1,7 +1,7 @@
 using System.Text.Json;
-using CosmoBoard.Models;
+using CosmoNote.Models;
 
-namespace CosmoBoard;
+namespace CosmoNote;
 
 public sealed class SettingsService
 {
@@ -11,12 +11,14 @@ public sealed class SettingsService
     public SettingsService()
     {
         var baseDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        var dir = Path.Combine(baseDir, "CosmoNotes");
+        var dir = Path.Combine(baseDir, "CosmoNote");
         Directory.CreateDirectory(dir);
         _filePath = Path.Combine(dir, "settings.json");
 
-        // Preserve settings from the previous CosmoBoard application name.
-        var oldFilePath = Path.Combine(baseDir, "CosmoBoard", "settings.json");
+        // Preserve settings from the previous CosmoNote application name.
+        var oldFilePath = Path.Combine(baseDir, "CosmoNotes", "settings.json");
+        if (!File.Exists(_filePath) && !File.Exists(oldFilePath))
+            oldFilePath = Path.Combine(baseDir, "CosmoBoard", "settings.json");
         if (!File.Exists(_filePath) && File.Exists(oldFilePath))
         {
             try

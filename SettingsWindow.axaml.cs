@@ -2,9 +2,9 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
-using CosmoBoard.Models;
+using CosmoNote.Models;
 
-namespace CosmoBoard;
+namespace CosmoNote;
 
 public sealed class FontOption
 {
@@ -21,6 +21,7 @@ public partial class SettingsWindow : Window
         InitializeComponent();
 
         FolderTextBox.Text = settings.NotesFolder ?? string.Empty;
+        CarryOverCheckBox.IsChecked = settings.CarryOverUncompletedToToday;
 
         var fonts = FontManager.Current.SystemFonts
             .GroupBy(font => font.Name, StringComparer.OrdinalIgnoreCase)
@@ -76,6 +77,7 @@ public partial class SettingsWindow : Window
         var settings = new AppSettings
         {
             NotesFolder = string.IsNullOrWhiteSpace(FolderTextBox.Text) ? null : FolderTextBox.Text.Trim(),
+            CarryOverUncompletedToToday = CarryOverCheckBox.IsChecked == true,
             FontFamily = selectedFont?.Name ?? "Default",
             TitleBarFontSize = (double)(TitleFontSizeBox.Value ?? 12),
             ContentFontSize = (double)(ContentFontSizeBox.Value ?? 12),

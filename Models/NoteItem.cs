@@ -1,4 +1,4 @@
-namespace CosmoBoard.Models;
+namespace CosmoNote.Models;
 
 public sealed class NoteItem
 {

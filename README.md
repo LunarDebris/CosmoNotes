@@ -1,4 +1,4 @@
-# CosmoBoard
+# CosmoNote
 
 A small frameless, cross-platform C#/.NET + Avalonia desktop widget for displaying the newest `YYYY-MM-DD.md` file in a selected folder.
 
@@ -13,7 +13,7 @@ A small frameless, cross-platform C#/.NET + Avalonia desktop widget for displayi
 - Drag the bottom-right corner to resize.
 - Right-click for Refresh, Always on Top, Background/Tray, Settings, and Exit.
 - Optional system tray mode.
-- Folder selection is stored in `%APPDATA%/CosmoBoard/settings.json` on Windows and the corresponding application-data location on Linux.
+- Folder selection is stored in `%APPDATA%/CosmoNote/settings.json` on Windows and the corresponding application-data location on Linux.
 - Automatically refreshes when Markdown files in the selected folder change.
 
 ## Requirements
@@ -99,3 +99,12 @@ This revision keeps the fixed5 MSYS/NuGet environment handling and fixes the Ava
 - Removed the invalid `PositionProperty` check; window position is still saved whenever bounds are persisted/closed.
 - Captures the resize pointer as `IInputElement` rather than `Visual`.
 - Explicitly names the tuple fields in `MarkdownFileService` so `candidate.date` is preserved.
+
+
+## New features
+
+- Tasks containing `(tag)` are visually grouped and sorted case-insensitively by their first tag, without reordering Markdown lines or losing task indices. Untagged tasks follow tagged tasks.
+- Header right-click menu has Yesterday, Tomorrow, Today, and Change Date; creating tasks remains available in the task section.
+- Global Notes are shared across all windows and dates, stored at the per-user application data location `CosmoNote/global-notes.txt`. Edits save on losing focus; reopen or refresh other windows to view updates.
+- Settings offers optional carryover of uncompleted tasks to Today when the currently displayed day is the latest existing day before today. Existing target task texts are not duplicated.
+- Renamed application/project to CosmoNote. Existing settings are migrated from CosmoNotes or CosmoBoard at first launch.

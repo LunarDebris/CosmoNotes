@@ -5,7 +5,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
 using System.Windows.Input;
 
-namespace CosmoBoard;
+namespace CosmoNote;
 
 public partial class App : Application
 {
@@ -24,7 +24,7 @@ public partial class App : Application
             var tray = new TrayIcon
             {
                 Icon = LoadIcon(),
-                ToolTipText = "CosmoNotes",
+                ToolTipText = "CosmoNote",
                 Menu = CreateTrayMenu()
             };
             tray.Clicked += (_, _) => MainWindow.ShowFromTray();
@@ -36,14 +36,14 @@ public partial class App : Application
 
     private WindowIcon? LoadIcon()
     {
-        var uri = new Uri("avares://CosmoNotes/Assets/cosmoboard.ico");
+        var uri = new Uri("avares://CosmoNote/Assets/cosmonote.ico");
         return new WindowIcon(AssetLoader.Open(uri));
     }
 
     private NativeMenu CreateTrayMenu()
     {
         var menu = new NativeMenu();
-        menu.Items.Add(new NativeMenuItem("Show CosmoNotes") { Command = new RelayCommand(() => MainWindow?.ShowFromTray()) });
+        menu.Items.Add(new NativeMenuItem("Show CosmoNote") { Command = new RelayCommand(() => MainWindow?.ShowFromTray()) });
         menu.Items.Add(new NativeMenuItem("Refresh") { Command = new RelayCommand(() => MainWindow?.Refresh()) });
         menu.Items.Add(new NativeMenuItem("Settings") { Command = new RelayCommand(() => MainWindow?.OpenSettings()) });
         menu.Items.Add(new NativeMenuItemSeparator());
@@ -65,4 +65,5 @@ public sealed class AppServices
 {
     public SettingsService Settings { get; } = new();
     public MarkdownFileService Markdown { get; } = new();
+    public GlobalNotesService GlobalNotes { get; } = new();
 }

@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <AssemblyName>CosmoNotes</AssemblyName>
-    <Product>CosmoNotes</Product>
-    <Title>CosmoNotes</Title>
+    <AssemblyName>CosmoNote</AssemblyName>
+    <Product>CosmoNote</Product>
+    <Title>CosmoNote</Title>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <ApplicationIcon>Assets/cosmoboard.ico</ApplicationIcon>
+    <ApplicationIcon>Assets/cosmonote.ico</ApplicationIcon>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <AvaloniaResource Include="Assets/cosmoboard.ico" />
+    <AvaloniaResource Include="Assets/cosmonote.ico" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,10 +1,11 @@
-namespace CosmoBoard.Models;
+namespace CosmoNote.Models;
 
 public sealed class AppSettings
 {
     public string? NotesFolder { get; set; }
     public bool AlwaysOnTop { get; set; }
     public bool BackgroundMode { get; set; }
+    public bool CarryOverUncompletedToToday { get; set; }
     public string FontFamily { get; set; } = "Default";
     public double TitleBarFontSize { get; set; } = 12;
     public double ContentFontSize { get; set; } = 12;

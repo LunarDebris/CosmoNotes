@@ -1,8 +1,8 @@
 using System.Text;
 using System.Text.RegularExpressions;
-using CosmoBoard.Models;
+using CosmoNote.Models;
 
-namespace CosmoBoard;
+namespace CosmoNote;
 
 public sealed class MarkdownFileService
 {
@@ -34,6 +34,20 @@ public sealed class MarkdownFileService
             return null;
 
         return ParseFile(candidate.path, candidate.date);
+    }
+
+    public DateOnly? LatestExistingDateBefore(string? folder, DateOnly date)
+    {
+        if (string.IsNullOrWhiteSpace(folder) || !Directory.Exists(folder))
+            return null;
+        return Directory.EnumerateFiles(folder, "*.md", SearchOption.TopDirectoryOnly)
+            .Select(path => DateFileRegex.Match(Path.GetFileName(path)))
+            .Where(match => match.Success)
+            .Select(match => DateOnly.TryParseExact(match.Groups["date"].Value, "yyyy-MM-dd", out var parsed)
+                ? (DateOnly?)parsed : null)
+            .Where(candidate => candidate.HasValue && candidate.Value < date)
+            .OrderByDescending(candidate => candidate)
+            .FirstOrDefault();
     }
 
     public DailyEntry? LoadDate(string? folder, DateOnly date)
@@ -75,7 +89,7 @@ public sealed class MarkdownFileService
                     var noteLines = new List<string> { bullet.Groups["text"].Value.Trim() };
                     var lastConsumedLine = lineIndex;
 
-                    // Consecutive non-task bullets are one multiline note in CosmoNotes.
+                    // Consecutive non-task bullets are one multiline note in CosmoNote.
                     // Blank lines do not become notes and do not split the editable note.
                     for (var continuationIndex = lineIndex + 1; continuationIndex < lines.Length; continuationIndex++)
                     {
@@ -232,7 +246,7 @@ public sealed class MarkdownFileService
                     existingLines.RemoveAt(existingLines.Count - 1);
             }
 
-            // CosmoNotes owns non-task bullet lines as notes. Remove the old note
+            // CosmoNote owns non-task bullet lines as notes. Remove the old note
             // bullets wherever they currently are, leaving tasks and any unrelated
             // Markdown untouched.
             existingLines = existingLines

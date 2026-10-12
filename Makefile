@@ -1,5 +1,5 @@
-APP      := CosmoNotes
-PROJECT  := CosmoBoard.csproj
+APP      := CosmoNote
+PROJECT  := CosmoNote.csproj
 CONFIG   ?= Release
 
 SHELL := /bin/bash
